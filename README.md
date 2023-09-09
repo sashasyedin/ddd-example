@@ -1,1 +1,1 @@
-# ddd-example
+# ddd-core
