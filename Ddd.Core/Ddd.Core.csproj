@@ -9,6 +9,7 @@
     <ItemGroup>
         <Using Include="System.Collections.Immutable" />
         <Using Include="System.Diagnostics.CodeAnalysis" />
+        <Using Include="Ddd.Core.Globals" Static="True" />
     </ItemGroup>
 
 </Project>
