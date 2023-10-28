@@ -14,9 +14,9 @@ public abstract class Enumeration : IComparable
     public override string ToString()
         => Name;
 
-    public static IReadOnlyCollection<T> GetAll<T>()
+    public static IEnumerable<T> GetAll<T>()
         where T : Enumeration
-        => (IReadOnlyCollection<T>)typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
+        => typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .Select(f => f.GetValue(null))
             .Cast<T>();
 

@@ -16,7 +16,7 @@ public abstract class Specification<T>
         if (result)
             _proceedWithAction();
 
-        message = string.Join(StringSeparator, ErrorMessages);
+        message = string.Join(OuterStringSeparator, ErrorMessages);
         return result;
     }
 

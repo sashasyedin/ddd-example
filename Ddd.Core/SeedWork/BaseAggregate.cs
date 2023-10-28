@@ -13,7 +13,7 @@ public abstract class BaseAggregate<TAggregate, TEvent, TKey> : IAggregateRoot<T
     where TEvent : class, IDomainEvent<TKey>
 {
     private readonly Queue<TEvent> _events = new();
-    private readonly Dictionary<long, string> _warnings = new();
+    private readonly List<WarningModel> _warnings = new();
 
     // ReSharper disable StaticMemberInGenericType
     private static readonly ConstructorInfo Ctor;
@@ -36,23 +36,33 @@ public abstract class BaseAggregate<TAggregate, TEvent, TKey> : IAggregateRoot<T
     public IReadOnlyCollection<TEvent> Events => _events;
 
     /// <summary>
-    /// Collection of warnings keyed by aggregate version
+    /// Collection of cumulative warnings keyed by aggregate version
     /// </summary>
-    public IReadOnlyDictionary<long, string> Warnings => _warnings;
+    public IReadOnlyCollection<WarningModel> Warnings => _warnings;
 
     public TKey Id { get; }
     public long Version { get; private set; }
+    public long CreatedAtTimestamp { get; private set; }
     public long UpdatedAtTimestamp { get; private set; }
+
+    /// <summary>
+    /// Invalidates uncommitted events
+    /// </summary>
+    public void ClearEvents()
+        => _events.Clear();
 
     /// <summary>
     /// Applies event to the aggregate instance
     /// </summary>
     /// <param name="event">Event to be applied to the aggregate</param>
-    public void ApplyEvent(TEvent @event)
+    protected void ApplyEvent(TEvent @event)
     {
         try
         {
             EventHandlers[@event.GetType()].Invoke(this, new object[] { @event });
+
+            if (!_events.Any())
+                CreatedAtTimestamp = @event.Timestamp;
 
             _events.Enqueue(@event);
 
@@ -70,13 +80,16 @@ public abstract class BaseAggregate<TAggregate, TEvent, TKey> : IAggregateRoot<T
     }
 
     /// <summary>
-    /// Invalidates uncommitted events
+    /// Logs warnings
     /// </summary>
-    public void ClearEvents()
-        => _events.Clear();
-
+    /// <param name="event">Reference to event</param>
+    /// <param name="message">Message</param>
     protected void LogWarning(TEvent @event, string message)
-        => _warnings.Add(@event.AggregateVersion, message);
+        => _warnings.Add(new()
+        {
+            AggregateVersion = @event.AggregateVersion,
+            Message = message
+        });
 
     /// <summary>
     /// Rehydrates the aggregate
