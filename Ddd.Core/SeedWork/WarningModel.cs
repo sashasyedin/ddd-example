@@ -2,6 +2,6 @@ namespace Ddd.Core.SeedWork;
 
 public record WarningModel
 {
-    public long AggregateVersion { get; init; }
-    public string Message { get; init; } = Unknown;
+    public required long AggregateVersion { get; init; }
+    public required string Message { get; init; }
 }
