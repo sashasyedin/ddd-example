@@ -1,4 +1,4 @@
-namespace Ddd.Core.SeedWork;
+namespace Domain.Seedwork;
 
 public record WarningModel
 {

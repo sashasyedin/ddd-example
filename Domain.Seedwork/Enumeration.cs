@@ -1,15 +1,12 @@
 using System.Reflection;
 
-namespace Ddd.Core.Utils;
+namespace Domain.Seedwork;
 
 [Serializable]
-public abstract class Enumeration : IComparable
+public abstract class Enumeration(int value, string name) : IComparable
 {
-    protected Enumeration(int value, string name)
-        => (Value, Name) = (value, name);
-
-    public int Value { get; }
-    public string Name { get; }
+    public int Value { get; } = value;
+    public string Name { get; } = name;
 
     public override string ToString()
         => Name;
@@ -43,14 +40,16 @@ public abstract class Enumeration : IComparable
     public static T FromValue<T>(int value)
         where T : Enumeration
     {
-        var matchingItem = Parse<T, int>(value, "value", item => item.Value == value);
+        const string description = "value";
+        var matchingItem = Parse<T, int>(value, description, item => item.Value == value);
         return matchingItem;
     }
 
     public static T FromName<T>(string name)
         where T : Enumeration
     {
-        var matchingItem = Parse<T, string>(name, "name", item => item.Name == name);
+        const string description = "name";
+        var matchingItem = Parse<T, string>(name, description, item => item.Name == name);
         return matchingItem;
     }
 

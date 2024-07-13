@@ -1,8 +1,7 @@
-﻿namespace Ddd.Core.SeedWork;
+﻿namespace Domain.Seedwork.Interfaces;
 
-public interface IAggregateRoot<out TKey>
+public interface IAggregateRoot
 {
-    TKey Id { get; }
     long Version { get; }
     long CreatedAtTimestamp { get; }
     long UpdatedAtTimestamp { get; }
